@@ -1,6 +1,10 @@
 from flask import Flask, render_template, url_for, flash, redirect
 from .forms import RegistrationForm, LoginForm
 from app import app
+from .models import User, Post
+from flask_login import login_user, current_user, logout_user, login_required
+
+
 
 app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
 
@@ -52,4 +56,13 @@ def login():
     return render_template('login.html', title='Login', form=form)
 
 
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
 
+
+@app.route("/account")
+@login_required
+def account():
+    return render_template('account.html', title='Account')
