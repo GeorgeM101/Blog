@@ -1,21 +1,21 @@
 
-#### BLOG-APP
+### BLOG-APP
 
 - Developer: George Mboya
 
-## Project Description
+### Project Description
 
 A web application where users can add post blogs
 
-## User Stories
+### User Stories
 A user should be able to:
 - Create an account
 - Comment on a post
 - Add a post
 
-## Setup Instructions
+### Setup Instructions
 
-- Python 3.8
+- Python 3
 
 ### Running the Application
 
@@ -25,7 +25,7 @@ To run the application, in your terminal:
 - 
 - 
 
-## License
+### License
 
 George Mboya
 
