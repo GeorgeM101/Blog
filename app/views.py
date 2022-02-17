@@ -103,16 +103,6 @@ def update_post(post_id):
     post = Post.query.get_or_404(post_id)
     return render_template('post.html', title=post.title, post=post )
 
-# @app.route('/new_user')
-# def new_user():
-#     user_email = 'tests@gmail.com'
-#     username = 'Leroy'
-#     image_file = 'tests.jpg'
-#     password = generate_password_hash('tests')
-#     new_user = Users( username=username,email=user_email, image_file=image_file, password=password)
-#     db.session.add(new_user)
-#     db.session.commit()
-#     return redirect(request.referrer)
 
 @app.route("/delete/<int:id>")
 @login_required
