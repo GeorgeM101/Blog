@@ -12,25 +12,11 @@ import secrets
 
 app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
 
-posts = [
-    {
-        'author': 'George Mboya',
-        'title': 'Blog Post 1',
-        'content': 'First post content',
-        'date_posted': 'February 15, 2022'
-    },
-    {
-        'author': 'Jane Doe',
-        'title': 'Blog Post 2',
-        'content': 'Second post content',
-        'date_posted': 'February 15, 2022'
-    }
-]
-
 
 @app.route("/")
 @app.route("/home")
 def home():
+    posts = Post.query.all()
     return render_template('home.html', posts=posts)
 
 
@@ -85,4 +71,10 @@ def account():
 @app.route("/post/new", methods=['GET','POST'])
 def new_post():
     form = PostBlog()
-    return render_template('new_post.html', title='Create a blog',Blogform=form)
+    if form.validate_on_submit():
+        post = Post(title=form.title.data, content=form.content.data)
+        db.session.add(post)
+        db.session.commit()
+        flash("Your post has been created!", 'success')
+        return redirect(url_for('home'))
+    return render_template('new_post.html', title='Create a blog',form=form)
