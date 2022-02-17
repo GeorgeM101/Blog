@@ -36,6 +36,7 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash('Your account has been created! You are now able to log in', 'success')
+        
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
@@ -46,8 +47,11 @@ def login():
         return redirect(url_for('home'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = Users.query.filter_by(email=form.email.data).first()
-        if (user.email == form.email.data):
+        user_email=form.email.data
+        user = Users.query.filter_by(email=user_email).first()
+        # useremail = user.password
+        # checkpassword = check_password_hash()
+        if (user):
             login_user(user, remember=form.remember.data)
             return redirect(url_for('home'))
         else:
@@ -65,6 +69,15 @@ def logout():
 @login_required
 def account():
     form = UpdateAccountForm()
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        db.session.commit()
+        flash('Account updated', 'success')
+        return redirect(url_for('account'))
+    elif request.method == 'GET':
+        form.username.data =  current_user.username
+        form.email.data = current_user.email
     image_file = url_for('static', filename='prof/'+ current_user.image_file)
     return render_template('account.html', title='Account', image_file=image_file, form=form)
 
@@ -114,12 +127,10 @@ def update_post(post_id):
 #     db.session.commit()
 #     return redirect(request.referrer)
 
-@app.route("/post/<int:post_id>/delete", methods=['POST'])
+@app.route("/delete/<int:id>")
 @login_required
-def delete_post(post_id):
-    post = Post.query.get_or_404(post_id)
-    if post.author != current_user:
-        abort(403)
+def delete_post(id):
+    post = Post.query.filter_by(id=id).first()
     db.session.delete(post)
     db.session.commit()
     flash('Your post has been deleted!', 'success')
