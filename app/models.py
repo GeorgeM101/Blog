@@ -1,9 +1,7 @@
 from datetime import datetime
 from app import db, login_manager
 from flask_login import UserMixin
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -32,7 +30,3 @@ class Post(db.Model):
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
 
-class PostBlog(FlaskForm):
-    title = StringField('Title', validators=[DataRequired()])
-    content = TextAreaField('Blog', validators=[DataRequired()])
-    submit = SubmitField('Post')
