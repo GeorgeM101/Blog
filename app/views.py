@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, flash, redirect, request
-from .forms import RegistrationForm, LoginForm
+from .forms import RegistrationForm, LoginForm, PostBlog
 from flask_bcrypt import bcrypt
 from app import app, db
 from .models import User, Post
@@ -82,6 +82,7 @@ def account():
     return render_template('account.html', title='Account')
 
 
-@app.route("/logout")
+@app.route("/post/new", methods=['GET','POST'])
 def new_post():
-    return render_template('new_post.html', title='Create a blog')
+    form = PostBlog()
+    return render_template('new_post.html', title='Create a blog',Blogform=form)
