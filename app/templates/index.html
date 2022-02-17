@@ -63,7 +63,9 @@
     </header>
     <main role="main" class="container">
       <div class="row">
-        <div class="col-md-8">{% block content %}{% endblock %}</div>
+        <div class="col-md-8">{% block content %}
+          <a class="nav-item nav-link" href={{url_for('register')}}>Register</a>
+          {% endblock %}</div>
       </div>
     </main>
   </body>
