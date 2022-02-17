@@ -1,5 +1,5 @@
 from flask import Flask, abort, render_template, url_for, flash, redirect, request
-from .forms import RegistrationForm, LoginForm, PostBlog
+from .forms import RegistrationForm, LoginForm, PostBlog, UpdateAccountForm
 from flask_bcrypt import bcrypt
 from app import app, db
 from .models import Users, Post
@@ -61,10 +61,13 @@ def logout():
     return redirect(url_for('home'))
 
 
-@app.route("/account")
+@app.route("/account", methods=['GET', 'POST'])
 @login_required
 def account():
-    return render_template('account.html', title='Account')
+    form = UpdateAccountForm()
+    image_file = url_for('static', filename='prof/'+ current_user.image_file)
+    return render_template('account.html', title='Account', image_file=image_file, form=form)
+
 
 
 @app.route("/post/new", methods=['GET','POST'])
@@ -110,3 +113,14 @@ def update_post(post_id):
 #     db.session.add(new_user)
 #     db.session.commit()
 #     return redirect(request.referrer)
+
+@app.route("/post/<int:post_id>/delete", methods=['POST'])
+@login_required
+def delete_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if post.author != current_user:
+        abort(403)
+    db.session.delete(post)
+    db.session.commit()
+    flash('Your post has been deleted!', 'success')
+    return redirect(url_for('home'))
