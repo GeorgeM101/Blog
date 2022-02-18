@@ -1,6 +1,6 @@
 from app import app, db
 from app.models import *
-from flask_migrate import Migrate
+from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager,Shell,Server
 
 
@@ -11,7 +11,7 @@ manager = Manager(app)
 manager.add_command('server',Server)
 migrate = Migrate(app,db)
 
-manager.add_command('db')
+manager.add_command('db', MigrateCommand)
 
 @manager.command
 def test():
