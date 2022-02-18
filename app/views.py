@@ -2,28 +2,48 @@ from flask import Flask, abort, render_template, url_for, flash, redirect, reque
 from .forms import RegistrationForm, LoginForm, PostBlog, UpdateAccountForm
 from flask_bcrypt import bcrypt
 from app import app, db
-from .models import Users, Post
+from .models import Blog, Users, Post
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.security import check_password_hash,generate_password_hash
+from flask_mail import Mail, Message
+import requests
 
-import os
-import secrets
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'georgmboya@gmail.com'
+app.config['MAIL_PASSWORD'] = '3895451700'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+
+mail = Mail(app)
 
 
 
 app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
 
 
+
+
+@app.route('/',methods=['GET','POST'])
+def index():
+    blog = Blog
+    if request.method == 'POST':
+        title = request.form['title']
+        blog = request.form['blog']
+        print(title,blog)
+        new_blog = Blog(title,blog,user_id=current_user.id)
+        db.session.add(new_blog)
+        db.session.commit()
+    blogs = Blog.query.all()
+    BASE_URL = 'http://quotes.stormconsultancy.co.uk/random.json'
+    data = requests.get(BASE_URL).json()
+    return render_template('index.html',blogs=blogs,quote=data)
+
 @app.route("/")
 @app.route("/home")
 def home():
     posts = Post.query.all()
     return render_template('home.html', posts=posts)
-
-
-@app.route("/about")
-def about():
-    return render_template('about.html')
 
 
 @app.route("/register", methods=['GET', 'POST'])
