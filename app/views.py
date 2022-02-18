@@ -101,7 +101,9 @@ def new_post():
 @login_required
 def update_post(post_id):
     post = Post.query.get_or_404(post_id)
-    return render_template('post.html', title=post.title, post=post )
+    if post.author != current_user:
+        abort(403)
+    form = PostBlog()
 
 
 @app.route("/delete/<int:id>")
@@ -112,3 +114,4 @@ def delete_post(id):
     db.session.commit()
     flash('Your post has been deleted!', 'success')
     return redirect(url_for('home'))
+

@@ -2,10 +2,13 @@
 <article class="media content-section">
   <div class="media-body">
     <div class="article-metadata">
-      <a class="mr-2" href="#">{{ post.author.username }}</a>
-      <small class="text-muted"
-        >{{ post.date_posted.strftime('%Y-%m-%d')}}</small
-      >
+      <h5>
+        <a class="mr-2" href="#">{{ post.author.username }}</a>
+        <small class="text-muted">
+          <br />
+          {{ post.date_posted.strftime('%Y-%m-%d')}}</small
+        >
+      </h5>
     </div>
     <h2>
       <a class="article-title" href="{{url_for('update_post',post_id=post.id)}}"
