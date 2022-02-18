@@ -1,43 +1,15 @@
-from flask import Flask, abort, render_template, url_for, flash, redirect, request
+from flask import abort, render_template, url_for, flash, redirect, request
 from .forms import RegistrationForm, LoginForm, PostBlog, UpdateAccountForm
 from flask_bcrypt import bcrypt
 from app import app, db
-from .models import Blog, Users, Post
+from .models import Users, Post
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.security import check_password_hash,generate_password_hash
-from flask_mail import Mail, Message
-import requests
-
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = 'georgmboya@gmail.com'
-app.config['MAIL_PASSWORD'] = '3895451700'
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
-
-mail = Mail(app)
 
 
 
 app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
 
-
-
-
-@app.route('/',methods=['GET','POST'])
-def index():
-    blog = Blog
-    if request.method == 'POST':
-        title = request.form['title']
-        blog = request.form['blog']
-        print(title,blog)
-        new_blog = Blog(title,blog,user_id=current_user.id)
-        db.session.add(new_blog)
-        db.session.commit()
-    blogs = Blog.query.all()
-    BASE_URL = 'http://quotes.stormconsultancy.co.uk/random.json'
-    data = requests.get(BASE_URL).json()
-    return render_template('index.html',blogs=blogs,quote=data)
 
 @app.route("/")
 @app.route("/home")
@@ -114,16 +86,26 @@ def new_post():
         db.session.commit()
         flash("Your post has been created!", 'success')
         return redirect(url_for('home'))
-    return render_template('new_post.html', title='Create a blog',form=form)
+    return render_template('new_post.html', title='Create a blog',form=form, legend='New Blog')
 
 
-@app.route("/post/<int:post_id>")
+@app.route("/post/<int:post_id>", methods=['GET', 'POST'])
 @login_required
 def update_post(post_id):
     post = Post.query.get_or_404(post_id)
     if post.author != current_user:
         abort(403)
     form = PostBlog()
+    if form.validate_on_submit():
+        post.title=form.title.data
+        post.content = form.content.data
+        db.session.commit()
+        flash('Your post has been updated', 'success')
+        return redirect(url_for('post', post_id=post.id))
+    elif request.method == 'GET':
+     form.title.data = post.title
+    form.content.data= post.content
+    return render_template('new_post.html', title='Update Post' ,form=form, legend='Update Blog')
 
 
 @app.route("/delete/<int:id>")

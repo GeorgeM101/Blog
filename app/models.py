@@ -31,12 +31,5 @@ class Post(db.Model):
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
 
-class Blog(db.Model):
-    __tablename__ = 'blogs'
 
-    id = db.Column(db.Integer,primary_key=True)
-    title = db.Column(db.String(200))
-    blogs = db.Column(db.String(5000))
-    user_id = db.Column(db.Integer,db.ForeignKey('users.id'))
-    comments = db.relationship('Comment',backref='blog')
 
