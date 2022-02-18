@@ -1,1 +1,1 @@
-web: gunicorn server:manager
+web: gunicorn run:manager
