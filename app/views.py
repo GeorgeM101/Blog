@@ -5,6 +5,7 @@ from app import app, db
 from .models import Users, Post
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.security import check_password_hash,generate_password_hash
+import requests
 
 
 
@@ -15,7 +16,9 @@ app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
 @app.route("/home")
 def home():
     posts = Post.query.all()
-    return render_template('home.html', posts=posts)
+    BASE_URL = 'http://quotes.stormconsultancy.co.uk/random.json'
+    data = requests.get(BASE_URL).json()
+    return render_template('home.html', posts=posts, quote=data)
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -54,6 +57,7 @@ def login():
 @app.route("/logout")
 def logout():
     logout_user()
+   
     return redirect(url_for('home'))
 
 
@@ -86,6 +90,7 @@ def new_post():
         db.session.commit()
         flash("Your post has been created!", 'success')
         return redirect(url_for('home'))
+    
     return render_template('new_post.html', title='Create a blog',form=form, legend='New Blog')
 
 
